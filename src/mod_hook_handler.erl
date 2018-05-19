@@ -30,7 +30,7 @@ on_client_connected(ConnAck, Client = #mqtt_client{client_id = ClientId}, _Env) 
         {ts, emqttd_time:now_to_secs()}
     ]),
     
-  ekaf:produce_async_batched(<<"broker_message">>, list_to_binary(Json)),   
+  ekaf:produce_async_batched(<<"test">>, list_to_binary(Json)),   
 
   {ok, Client}.
 
