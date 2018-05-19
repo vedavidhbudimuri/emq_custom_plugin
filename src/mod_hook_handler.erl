@@ -22,16 +22,24 @@ load(Env) ->
 
 on_client_connected(ConnAck, Client = #mqtt_client{client_id = ClientId}, _Env) ->
   io:format("client ~s connected, connack: ~w~n", [ClientId, ConnAck]),
+  
+  Topic = <<"test">>,
+  Partition = 0,
+  KafkaBootstrapEndpoints = [{"localhost", 9092}],
 
-    Json = mochijson2:encode([
-        {type, <<"connected">>},
-        {client_id, ClientId},
-        {cluster_node, node()},
-        {ts, emqttd_time:now_secs()}
-    ]),
-    
-  ekaf:produce_sync_batched(<<"test">>, list_to_binary(Json)),   
-  io:format("Pushed data to kafka"),
+  Json = mochijson2:encode([
+      {type, <<"connected">>},
+      {client_id, ClientId},
+      {cluster_node, node()},
+      {ts, emqttd_time:now_secs()}
+  ]),    
+  ekaf:produce_sync_batched(Topic, list_to_binary(Json)),
+  io:format("Pushed data using ekaf\n"),
+   
+  ok = brod:start_client(KafkaBootstrapEndpoints, client1),
+  ok = brod:start_producer(client1, Topic, _ProducerConfig = []),
+  brod:produce_sync(client1, Topic, Partition, <<"key1">>, <<"value1">>),
+  io:format("Pushed data to usong brod to kafka\n"),
   {ok, Client}.
 
 on_client_disconnected(Reason, _Client = #mqtt_client{client_id = ClientId}, _Env) ->

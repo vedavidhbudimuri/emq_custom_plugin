@@ -1,4 +1,9 @@
-[{<<"ekaf">>,
+{"1.1.0",
+[{<<"brod">>,
+  {git,"https://github.com/klarna/brod",
+       {ref,"b3df3036dd5339e801833d8fef426dc53cf21c01"}},
+  0},
+ {<<"ekaf">>,
   {git,"https://github.com/helpshift/ekaf.git",
        {ref,"829453cb26876e4b483c9875a63ff8551ae06c09"}},
   0},
@@ -6,6 +11,7 @@
   {git,"https://github.com/uwiger/gproc.git",
        {ref,"a30b18c735a028e92837fb9d3d38de06935d862b"}},
   1},
+ {<<"kafka_protocol">>,{pkg,<<"kafka_protocol">>,<<"1.1.2">>},1},
  {<<"kafkamocker">>,
   {git,"https://github.com/helpshift/kafkamocker",
        {ref,"b3fdeb58a1eca1c864a45f35a4e5632e74f43a24"}},
@@ -13,4 +19,12 @@
  {<<"ranch">>,
   {git,"https://github.com/extend/ranch.git",
        {ref,"e381ccccdff196ded3624162bc106aff09885e60"}},
-  2}].
+  2},
+ {<<"snappyer">>,{pkg,<<"snappyer">>,<<"1.2.1">>},2},
+ {<<"supervisor3">>,{pkg,<<"supervisor3">>,<<"1.1.5">>},1}]}.
+[
+{pkg_hash,[
+ {<<"kafka_protocol">>, <<"96D09C4287377795AE2C488ACEAE2DC6872B94EDBA8309A27ACE933D9AE32333">>},
+ {<<"snappyer">>, <<"06C5F5C8AFE80BA38E94E1CA1BD9253DE95D8F2C85B08783E8D0F63815580556">>},
+ {<<"supervisor3">>, <<"5F3C487A6EBA23DE0E64C06E93EFA0ECA06F40324A6412C1318C77ACA6DA8424">>}]}
+].
