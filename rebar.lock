@@ -1,1 +1,16 @@
-[].
+[{<<"ekaf">>,
+  {git,"https://github.com/helpshift/ekaf.git",
+       {ref,"829453cb26876e4b483c9875a63ff8551ae06c09"}},
+  0},
+ {<<"gproc">>,
+  {git,"https://github.com/uwiger/gproc.git",
+       {ref,"a30b18c735a028e92837fb9d3d38de06935d862b"}},
+  1},
+ {<<"kafkamocker">>,
+  {git,"https://github.com/helpshift/kafkamocker",
+       {ref,"b3fdeb58a1eca1c864a45f35a4e5632e74f43a24"}},
+  1},
+ {<<"ranch">>,
+  {git,"https://github.com/extend/ranch.git",
+       {ref,"e381ccccdff196ded3624162bc106aff09885e60"}},
+  2}].

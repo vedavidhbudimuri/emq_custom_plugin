@@ -21,6 +21,17 @@ load(Env) ->
   emqttd:hook('message.acked', fun ?MODULE:on_message_acked/4, [Env]).
 
 on_client_connected(ConnAck, Client = #mqtt_client{client_id = ClientId}, _Env) ->
+  io:format("client ~s connected, connack: ~w~n", [ClientId, ConnAck]),
+
+    Json = mochijson2:encode([
+        {type, <<"connected">>},
+        {client_id, ClientId},
+        {cluster_node, node()},
+        {ts, emqttd_time:now_to_secs()}
+    ]),
+    
+  ekaf:produce_async_batched(<<"broker_message">>, list_to_binary(Json)),   
+
   {ok, Client}.
 
 on_client_disconnected(Reason, _Client = #mqtt_client{client_id = ClientId}, _Env) ->
