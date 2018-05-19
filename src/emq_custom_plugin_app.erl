@@ -16,14 +16,14 @@
 
 start(_StartType, _StartArgs) ->
     emq_custom_plugin_sup:start_link(),
-    ok = emqttd_access_control:register_mod(auth, emq_custom_plugin, []),
-    ok = emqttd_access_control:register_mod(acl, emq_custom_plugin, []),
+    emqttd_access_control:register_mod(auth, emq_custom_plugin, []),
+    emqttd_access_control:register_mod(acl, emq_custom_plugin, []),
     mod_hook_handler:load(application:get_all_env()).
 
 %%--------------------------------------------------------------------
 stop(_State) ->
-    ok = emqttd_access_control:unregister_mod(auth, emq_auth_demo),
-    ok = emqttd_access_control:unregister_mod(acl, emq_acl_demo),
+    emqttd_access_control:unregister_mod(auth, emq_auth_demo),
+    emqttd_access_control:unregister_mod(acl, emq_acl_demo),
     emq_custom_plugin:unload(),
     ok.
 
