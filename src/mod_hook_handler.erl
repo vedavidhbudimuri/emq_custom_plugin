@@ -34,7 +34,7 @@ on_client_connected(ConnAck, Client = #mqtt_client{client_id = ClientId}, _Env) 
   ekaf:produce_sync_batched(Topic, list_to_binary(Json)),
   io:format("Pushed data using ekaf\n"),
    
-  emit_to_kafka_using_brod(list_to_binary(Json)),
+  emit_to_kafka_using_brod(Json),
   {ok, Client}.
 
 on_client_disconnected(Reason, _Client = #mqtt_client{client_id = ClientId}, _Env) ->
@@ -79,7 +79,7 @@ on_message_publish(Message, _Env) ->
           {cluster_node, node()},
           {ts, emqttd_time:now_secs(Timestamp)}
   ]),
-  emit_to_kafka_using_brod(list_to_binary(Json)),
+  emit_to_kafka_using_brod(Json),
   {ok, Message}.
 
 on_message_delivered(ClientId, Username, Message, _Env) ->
