@@ -15,17 +15,17 @@
 %%====================================================================
 
 start(_StartType, _StartArgs) ->
-    emq_custom_plugin_sup:start_link(),
+    {ok, Sup} = emq_custom_plugin_sup:start_link(),
     emqttd_access_control:register_mod(auth, emq_custom_plugin, []),
     emqttd_access_control:register_mod(acl, emq_custom_plugin, []),
-    mod_hook_handler:load(application:get_all_env()).
+    mod_hook_handler:load(application:get_all_env()),
+    {ok, Sup}.
 
 %%--------------------------------------------------------------------
 stop(_State) ->
-    emqttd_access_control:unregister_mod(auth, emq_auth_demo),
-    emqttd_access_control:unregister_mod(acl, emq_acl_demo),
-    emq_custom_plugin:unload(),
-    ok.
+    emqttd_access_control:unregister_mod(auth, emq_custom_plugin),
+    emqttd_access_control:unregister_mod(acl, emq_custom_plugin),
+    emq_custom_plugin:unload().
 
 %%====================================================================
 %% Internal functions
