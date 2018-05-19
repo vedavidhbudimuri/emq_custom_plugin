@@ -1,4 +1,4 @@
-
+-module(mod_hook_handler).
 -include_lib("emqttd/include/emqttd.hrl").
 
 -export([load/1, unload/0]).

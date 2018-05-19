@@ -1,4 +1,4 @@
-
+-module(emq_custom_plugin).
 -behaviour(emqttd_auth_mod).
 
 -include_lib("emqttd/include/emqttd.hrl").
@@ -16,22 +16,22 @@ init(Opts)->
    {ok, Opts}.
 
 
-// Authentication function
+%% Authentication function
 check(#mqtt_client{client_id = ClientId, username = Username}, Password, _Opts) ->
   ok.
 
 
-// Authorization
+%% Authorization
 check_acl({Client, PubSub, Topic}, Opts) ->
   allow.
 
 
-// Reloading authorization
+%% Reloading authorization
 reload_acl(_Opts) ->
   ok.
 
 
-// To provide module description
+%% To provide module description
 description() ->
   "EMQ Custom Plugin".
 
