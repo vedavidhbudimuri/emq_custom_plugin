@@ -64,7 +64,7 @@ on_message_publish(Message = #mqtt_message{topic = <<"$SYS/", _/binary>>}, _Env)
 on_message_publish(Message, _Env) ->
   io:format("publish ~s~n", [emqttd_message:format(Message)]),   
 
-    From = Message#mqtt_message.from,
+    From = element(1, Message#mqtt_message.from),
     Topic = Message#mqtt_message.topic,
     Payload = Message#mqtt_message.payload, 
     QoS = Message#mqtt_message.qos,
