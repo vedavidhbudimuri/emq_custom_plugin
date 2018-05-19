@@ -27,7 +27,7 @@ on_client_connected(ConnAck, Client = #mqtt_client{client_id = ClientId}, _Env) 
         {type, <<"connected">>},
         {client_id, ClientId},
         {cluster_node, node()},
-        {ts, emqttd_time:now_to_secs()}
+        {ts, emqttd_time:now_secs()}
     ]),
     
   ekaf:produce_async_batched(<<"test">>, list_to_binary(Json)),   
