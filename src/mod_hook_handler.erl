@@ -31,7 +31,7 @@ on_client_connected(ConnAck, Client = #mqtt_client{client_id = ClientId}, _Env) 
     ]),
     
   ekaf:produce_sync_batched(<<"test">>, list_to_binary(Json)),   
-
+  io:format("Pushed data to kafka"),
   {ok, Client}.
 
 on_client_disconnected(Reason, _Client = #mqtt_client{client_id = ClientId}, _Env) ->
