@@ -10,7 +10,7 @@
    check_acl/2,
    reload_acl/1,
    description/0
-])
+]).
 
 init(Opts)->
    {ok, Opts}.
