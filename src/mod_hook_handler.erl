@@ -77,7 +77,7 @@ on_message_publish(Message, _Env) ->
           {payload, Payload},
           {qos, QoS},
           {cluster_node, node()},
-          {ts, emqttd_time:now_to_secs(Timestamp)}
+          {ts, emqttd_time:now_secs(Timestamp)}
   ]),
   emit_to_kafka_using_brod(list_to_binary(Json)),
   {ok, Message}.
