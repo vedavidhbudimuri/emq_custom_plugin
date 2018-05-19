@@ -38,7 +38,7 @@ on_client_connected(ConnAck, Client = #mqtt_client{client_id = ClientId}, _Env) 
    
   ok = brod:start_client(KafkaBootstrapEndpoints, client1),
   ok = brod:start_producer(client1, Topic, _ProducerConfig = []),
-  brod:produce_sync(client1, Topic, Partition, <<"key1">>, <<"value1">>),
+  brod:produce_sync(client1, Topic, Partition, <<"key1">>, list_to_binary(Json)),
   io:format("Pushed data to usong brod to kafka\n"),
   {ok, Client}.
 
