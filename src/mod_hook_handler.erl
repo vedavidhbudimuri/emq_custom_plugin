@@ -23,19 +23,15 @@ load(Env) ->
 
 on_client_connected(ConnAck, Client = #mqtt_client{client_id = ClientId}, _Env) ->
   io:format("client ~s connected, connack: ~w~n", [ClientId, ConnAck]),
-  
-  Topic = <<"test">>,
-
   Json = mochijson2:encode([
       {type, <<"connected">>},
       {client_id, ClientId},
       {cluster_node, node()},
       {ts, emqttd_time:now_secs()}
   ]),    
-  ekaf:produce_async_batched(Topic, list_to_binary(Json)),
+  KafkaTopic = application:get_env(ekaf, ekaf_bootstrap_topics),
+  ekaf:produce_async_batched(KafkaTopic, list_to_binary(Json)),
   io:format("Pushed data using ekaf\n"),
-   
-  emit_to_kafka_using_brod(Json),
   {ok, Client}.
 
 on_client_disconnected(Reason, _Client = #mqtt_client{client_id = ClientId}, _Env) ->
@@ -83,9 +79,6 @@ on_message_publish(Message, _Env) ->
   io:format("Pushed data using ekaf\n"),
   KafkaTopic = application:get_env(ekaf, ekaf_bootstrap_topics),
   ekaf:produce_async_batched(KafkaTopic, list_to_binary(Json)),
-
-  io:format("Push data using brod\n"),
-  emit_to_kafka_using_brod(Json),
   {ok, Message}.
 
 on_message_delivered(ClientId, Username, Message, _Env) ->
@@ -106,15 +99,15 @@ unload() ->
 emqttd:unhook('message.acked', fun ?MODULE:on_message_acked/4).
 
 
-emit_to_kafka_using_brod(Json) ->
-  Topic = <<"test">>,
-  Partition = 0,
-  KafkaBootstrapEndpoints = [{"localhost", 9092}],
+% emit_to_kafka_using_brod(Json) ->
+%   Topic = <<"test">>,
+%   Partition = 0,
+%   KafkaBootstrapEndpoints = [{"localhost", 9092}],
 
-  ok = brod:start_client(KafkaBootstrapEndpoints, client1),
-  ok = brod:start_producer(client1, Topic, _ProducerConfig = []),
-  brod:produce_sync(client1, Topic, Partition, <<"key1">>, list_to_binary(Json)),
-  io:format("Pushed data to usong brod to kafka\n").
+%   ok = brod:start_client(KafkaBootstrapEndpoints, client1),
+%   ok = brod:start_producer(client1, Topic, _ProducerConfig = []),
+%   brod:produce_sync(client1, Topic, Partition, <<"key1">>, list_to_binary(Json)),
+%   io:format("Pushed data to usong brod to kafka\n").
 
 
 ekaf_init(_Env) ->
