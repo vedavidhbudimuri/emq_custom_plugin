@@ -78,6 +78,8 @@ on_message_publish(Message, _Env) ->
   ]),
   io:format("Pushed data using ekaf\n"),
   {ok, KafkaTopic} = application:get_env(ekaf, ekaf_bootstrap_topics),
+  io:format(KafkaTopic),
+  io:format(Json),
   ekaf:produce_async_batched(KafkaTopic, list_to_binary(Json)),
   {ok, Message}.
 
