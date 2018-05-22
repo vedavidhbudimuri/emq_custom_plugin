@@ -80,6 +80,11 @@ on_message_publish(Message, _Env) ->
           {cluster_node, node()},
           {ts, emqttd_time:now_secs(Timestamp)}
   ]),
+  io:format("Pushed data using ekaf\n"),
+  KafkaTopic = application:get_env(ekaf, ekaf_bootstrap_topics),
+  ekaf:produce_async_batched(KafkaTopic, list_to_binary(Json)),
+
+  io:format("Push data using brod\n"),
   emit_to_kafka_using_brod(Json),
   {ok, Message}.
 
