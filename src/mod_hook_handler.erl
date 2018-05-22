@@ -114,7 +114,7 @@ emit_to_kafka_using_brod(Json) ->
 
 ekaf_init(_Env) ->
     %% Get parameters
-    {ok, Kafka} = application:get_env(emqttd_plugin_kafka_bridge, kafka),
+    {ok, Kafka} = application:get_env(emq_custom_plugin, kafka),
     BootstrapBroker = proplists:get_value(bootstrap_broker, Kafka),
     PartitionStrategy = proplists:get_value(partition_strategy, Kafka),
     Topic = proplists:get_value(topic, Kafka),
