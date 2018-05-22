@@ -77,7 +77,7 @@ on_message_publish(Message, _Env) ->
           {ts, emqttd_time:now_secs(Timestamp)}
   ]),
   io:format("Pushed data using ekaf\n"),
-  KafkaTopic = application:get_env(ekaf, ekaf_bootstrap_topics),
+  {ok, KafkaTopic} = application:get_env(ekaf, ekaf_bootstrap_topics),
   ekaf:produce_async_batched(KafkaTopic, list_to_binary(Json)),
   {ok, Message}.
 
