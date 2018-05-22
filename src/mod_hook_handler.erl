@@ -22,7 +22,7 @@ load(Env) ->
   % emqttd:hook('message.acked', fun ?MODULE:on_message_acked/4, [Env]).
 
 on_client_connected(ConnAck, Client = #mqtt_client{client_id = ClientId}, _Env) ->
-  io:format("client ~s connected, connack: ~w~n", [ClientId, ConnAck]),
+  % io:format("client ~s connected, connack: ~w~n", [ClientId, ConnAck]),
   Json = mochijson2:encode([
       {type, <<"connected">>},
       {client_id, ClientId},
@@ -31,7 +31,7 @@ on_client_connected(ConnAck, Client = #mqtt_client{client_id = ClientId}, _Env) 
   ]),    
   KafkaTopic = application:get_env(brod, brod_bootstrap_topics),
   ekaf:produce_async_batched(KafkaTopic, list_to_binary(Json)),
-  io:format("Pushed data using ekaf\n"),
+  % io:format("Pushed data using ekaf\n"),
   {ok, Client}.
 
 on_client_disconnected(Reason, _Client = #mqtt_client{client_id = ClientId}, _Env) ->
@@ -59,7 +59,7 @@ on_message_publish(Message = #mqtt_message{topic = <<"$SYS/", _/binary>>}, _Env)
   {ok, Message};
 
 on_message_publish(Message, _Env) ->
-  io:format("publish ~s~n", [emqttd_message:format(Message)]),   
+  % io:format("publish ~s~n", [emqttd_message:format(Message)]),   
 
     From = element(1, Message#mqtt_message.from),
     Topic = Message#mqtt_message.topic,
@@ -76,10 +76,10 @@ on_message_publish(Message, _Env) ->
           {cluster_node, node()},
           {ts, emqttd_time:now_secs(Timestamp)}
   ]),
-  io:format("Pushed data using ekaf\n"),
+  % io:format("Pushed data using ekaf\n"),
   {ok, KafkaTopic} = application:get_env(brod, brod_bootstrap_topics),
-  io:format(KafkaTopic),
-  io:format(Json),
+  % io:format(KafkaTopic),
+  % io:format(Json),
 
   ekaf:produce_async_batched(KafkaTopic, list_to_binary(Json)),
   emit_to_kafka_using_brod(Json),
@@ -109,7 +109,7 @@ emit_to_kafka_using_brod(Json) ->
   {ok, Topic} = application:get_env(brod, brod_bootstrap_topics),
   Partition = 0,
   brod:produce_sync(client1, Topic, Partition, <<"key1">>, list_to_binary(Json)),
-  io:format("Pushed data to usong brod to kafka\n").
+  % io:format("Pushed data to usong brod to kafka\n").
 
 
 brod_init(_Env) ->
