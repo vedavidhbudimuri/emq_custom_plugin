@@ -8,7 +8,7 @@
 -export([on_message_publish/2, on_message_delivered/4, on_message_acked/4]).
 
 load(Env) ->
-  ekaf_init(),
+  ekaf_init([Env]),
   % emqttd:hook('client.connected', fun ?MODULE:on_client_connected/3, [Env]),
   % emqttd:hook('client.disconnected', fun ?MODULE:on_client_disconnected/3, [Env]),
   % emqttd:hook('client.subscribe', fun ?MODULE:on_client_subscribe/4, [Env]),
