@@ -109,8 +109,8 @@ emit_to_kafka_using_brod(Json) ->
   Partition = 0,
   {ok, KafkaBootstrapEndpoints} = application:get_env(brod, brod_bootstrap_broker),
 
-  ok = brod:start_client(KafkaBootstrapEndpoints, client1),
-  ok = brod:start_producer(client1, Topic, _ProducerConfig = []),
+  brod:start_client(KafkaBootstrapEndpoints, client1),
+  brod:start_producer(client1, Topic, _ProducerConfig = []),
   brod:produce_sync(client1, Topic, Partition, <<"key1">>, list_to_binary(Json)),
   io:format("Pushed data to usong brod to kafka\n").
 
