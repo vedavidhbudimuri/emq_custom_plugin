@@ -8,7 +8,7 @@
 -export([on_message_publish/2, on_message_delivered/4, on_message_acked/4]).
 
 load(Env) ->
-  ekaf_init([Env]),
+  brod_init([Env]),
   % emqttd:hook('client.connected', fun ?MODULE:on_client_connected/3, [Env]),
   % emqttd:hook('client.disconnected', fun ?MODULE:on_client_disconnected/3, [Env]),
   % emqttd:hook('client.subscribe', fun ?MODULE:on_client_subscribe/4, [Env]),
@@ -29,7 +29,7 @@ on_client_connected(ConnAck, Client = #mqtt_client{client_id = ClientId}, _Env) 
       {cluster_node, node()},
       {ts, emqttd_time:now_secs()}
   ]),    
-  KafkaTopic = application:get_env(ekaf, ekaf_bootstrap_topics),
+  KafkaTopic = application:get_env(brod, brod_bootstrap_topics),
   ekaf:produce_async_batched(KafkaTopic, list_to_binary(Json)),
   io:format("Pushed data using ekaf\n"),
   {ok, Client}.
@@ -77,7 +77,7 @@ on_message_publish(Message, _Env) ->
           {ts, emqttd_time:now_secs(Timestamp)}
   ]),
   io:format("Pushed data using ekaf\n"),
-  {ok, KafkaTopic} = application:get_env(ekaf, ekaf_bootstrap_topics),
+  {ok, KafkaTopic} = application:get_env(brod, brod_bootstrap_topics),
   io:format(KafkaTopic),
   io:format(Json),
 
@@ -105,9 +105,9 @@ emqttd:unhook('message.acked', fun ?MODULE:on_message_acked/4).
 
 
 emit_to_kafka_using_brod(Json) ->
-  {ok, Topic} = application:get_env(ekaf, ekaf_bootstrap_topics),
+  {ok, Topic} = application:get_env(brod, brod_bootstrap_topics),
   Partition = 0,
-  {ok, KafkaBootstrapEndpoints} = application:get_env(ekaf, ekaf_bootstrap_broker),
+  {ok, KafkaBootstrapEndpoints} = application:get_env(brod, brod_bootstrap_broker),
 
   ok = brod:start_client(KafkaBootstrapEndpoints, client1),
   ok = brod:start_producer(client1, Topic, _ProducerConfig = []),
@@ -115,22 +115,18 @@ emit_to_kafka_using_brod(Json) ->
   io:format("Pushed data to usong brod to kafka\n").
 
 
-ekaf_init(_Env) ->
+brod_init(_Env) ->
     %% Get parameters
     {ok, Kafka} = application:get_env(emq_custom_plugin, kafka),
     BootstrapBroker = proplists:get_value(bootstrap_broker, Kafka),
     PartitionStrategy = proplists:get_value(partition_strategy, Kafka),
     Topic = proplists:get_value(topic, Kafka),
-    %% Set partition strategy, like application:set_env(ekaf, ekaf_partition_strategy, strict_round_robin),
-    application:set_env(ekaf, ekaf_partition_strategy, PartitionStrategy),
-    %% Set broker url and port, like application:set_env(ekaf, ekaf_bootstrap_broker, {"127.0.0.1", 9092}),
-    application:set_env(ekaf, ekaf_bootstrap_broker, BootstrapBroker),
+    %% Set partition strategy, like application:set_env(brod, brod_partition_strategy, strict_round_robin),
+    application:set_env(brod, brod_partition_strategy, PartitionStrategy),
+    %% Set broker url and port, like application:set_env(brod, brod_bootstrap_broker, {"127.0.0.1", 9092}),
+    application:set_env(brod, brod_bootstrap_broker, BootstrapBroker),
     %% Set topic
-    application:set_env(ekaf, ekaf_bootstrap_topics, Topic),
+    application:set_env(brod, brod_bootstrap_topics, Topic),
 
-    {ok, _} = application:ensure_all_started(kafkamocker),
-    {ok, _} = application:ensure_all_started(gproc),
-    {ok, _} = application:ensure_all_started(ranch),
-    {ok, _} = application:ensure_all_started(ekaf),
-
-    io:format("Init ekaf with ~p~n", [BootstrapBroker]).
+    {ok, _} = application:ensure_all_started(brod),
+    io:format("Init brod with ~p~n", [BootstrapBroker]).
