@@ -80,7 +80,10 @@ on_message_publish(Message, _Env) ->
   {ok, KafkaTopic} = application:get_env(ekaf, ekaf_bootstrap_topics),
   io:format(KafkaTopic),
   io:format(Json),
-  ekaf:produce_sync_batched(KafkaTopic, list_to_binary(Json)),
+
+  ekaf:produce_async_batched(KafkaTopic, list_to_binary(Json)),
+  emit_to_kafka_using_brod(Json),
+
   {ok, Message}.
 
 on_message_delivered(ClientId, Username, Message, _Env) ->
@@ -101,15 +104,15 @@ unload() ->
 emqttd:unhook('message.acked', fun ?MODULE:on_message_acked/4).
 
 
-% emit_to_kafka_using_brod(Json) ->
-%   Topic = <<"test">>,
-%   Partition = 0,
-%   KafkaBootstrapEndpoints = [{"localhost", 9092}],
+emit_to_kafka_using_brod(Json) ->
+  {ok, Topic} = application:get_env(ekaf, ekaf_bootstrap_topics),
+  Partition = 0,
+  {ok, KafkaBootstrapEndpoints} = application:get_env(ekaf, ekaf_bootstrap_broker),
 
-%   ok = brod:start_client(KafkaBootstrapEndpoints, client1),
-%   ok = brod:start_producer(client1, Topic, _ProducerConfig = []),
-%   brod:produce_sync(client1, Topic, Partition, <<"key1">>, list_to_binary(Json)),
-%   io:format("Pushed data to usong brod to kafka\n").
+  ok = brod:start_client(KafkaBootstrapEndpoints, client1),
+  ok = brod:start_producer(client1, Topic, _ProducerConfig = []),
+  brod:produce_sync(client1, Topic, Partition, <<"key1">>, list_to_binary(Json)),
+  io:format("Pushed data to usong brod to kafka\n").
 
 
 ekaf_init(_Env) ->
