@@ -80,7 +80,7 @@ on_message_publish(Message, _Env) ->
   {ok, KafkaTopic} = application:get_env(ekaf, ekaf_bootstrap_topics),
   io:format(KafkaTopic),
   io:format(Json),
-  ekaf:produce_async_batched(KafkaTopic, list_to_binary(Json)),
+  ekaf:produce_sync_batched(KafkaTopic, list_to_binary(Json)),
   {ok, Message}.
 
 on_message_delivered(ClientId, Username, Message, _Env) ->
