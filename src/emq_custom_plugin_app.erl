@@ -25,7 +25,7 @@ start(_StartType, _StartArgs) ->
 stop(_State) ->
     emqttd_access_control:unregister_mod(auth, emq_custom_plugin),
     emqttd_access_control:unregister_mod(acl, emq_custom_plugin),
-    emq_custom_plugin:unload().
+    mod_hook_handler:unload().
 
 %%====================================================================
 %% Internal functions
