@@ -110,7 +110,7 @@ emit_to_kafka_using_brod(Json) ->
   Partition = 0,
   %% brod:produce_sync(client1, Topic, Partition, <<"key1">>, list_to_binary(Json)).
   % io:format("Pushed data to usong brod to kafka\n").
-
+  ok.
 
 brod_init(_Env) ->
     %% Get parameters
